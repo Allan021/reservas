@@ -4,8 +4,10 @@ import React, { useState, useEffect } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import Modal from "./modal";
+import { EVENTO_RESERVADO } from "@/app/api/reservas/route";
+import { EventClickArg, EventHoveringArg } from "@fullcalendar/core/index.js";
 
-type Evento = {
+export type Evento = {
   title: string;
   date: string;
   backgroundColor?: string;
@@ -32,7 +34,7 @@ const Calendario: React.FC = () => {
         const data = await res.json();
 
         const eventosTransformados = data.fechasReservadas.map(
-          (fecha: any) => ({
+          (fecha: EVENTO_RESERVADO) => ({
             title: fecha.tienda,
             date: fecha.fecha,
             backgroundColor: "red",
@@ -53,14 +55,20 @@ const Calendario: React.FC = () => {
     fetchEventos();
   }, []);
 
-  const handleEventClick = (clickInfo: any) => {
-    console.log(clickInfo.event);
-
-    setEventoSeleccionado(clickInfo.event);
+  const handleEventClick = (clickInfo: EventClickArg) => {
+    setEventoSeleccionado({
+      title: clickInfo.event.title || "",
+      date: clickInfo.event.start?.toISOString() || "",
+      backgroundColor: clickInfo.event.backgroundColor || undefined,
+      extendedProps: {
+        observacion:
+          clickInfo.event.extendedProps?.observacion || "Sin observación",
+      },
+    });
     setIsModalOpen(true);
   };
 
-  const handleEventMouseEnter = (mouseEnterInfo: any) => {
+  const handleEventMouseEnter = (mouseEnterInfo: EventHoveringArg) => {
     mouseEnterInfo.el.style.cursor = "pointer";
   };
 
@@ -100,7 +108,12 @@ const Calendario: React.FC = () => {
         {eventoSeleccionado && (
           <div className="flex flex-col p-4 gap-4">
             <h2 className="text-xl font-bold">{eventoSeleccionado.title}</h2>
+            <p className="text-gray-600">
+              Fecha de Reserva:{" "}
+              {new Date(eventoSeleccionado.date).toLocaleDateString()}
+            </p>
             <p>{eventoSeleccionado.extendedProps.observacion}</p>
+
             <button
               onClick={closeModal}
               className="mt-4 px-4 py-2 bg-blue-500 text-white rounded 

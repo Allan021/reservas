@@ -1,5 +1,17 @@
 import { NextResponse } from 'next/server';
 
+type EVENTO = {
+    FECHA: string;
+    TIENDA: string;
+    OBSERVACION: string;
+};
+
+export type EVENTO_RESERVADO = {
+    fecha: string;
+    tienda: string;
+    observacion: string;
+};
+
 export async function GET() {
     try {
         const response = await fetch('https://script.google.com/macros/s/AKfycbwm6TA_nQC0IzAihPsO9R4WTXiyByjnTG53q6Ushf5-jJ9uX9F-NoAv9tHaBidz1eqfeg/exec');
@@ -10,8 +22,8 @@ export async function GET() {
 
         // Filtrar eventos vacíos y transformar fechas
         const fechasReservadas = data
-            .filter((evento: any) => evento.FECHA && evento.TIENDA)
-            .map((evento: any) => ({
+            .filter((evento: EVENTO) => evento.FECHA && evento.TIENDA)
+            .map((evento: EVENTO) => ({
                 fecha: new Date(evento.FECHA).toISOString().split('T')[0], // Formato 'YYYY-MM-DD'
                 tienda: evento.TIENDA,
                 observacion: evento.OBSERVACION,
