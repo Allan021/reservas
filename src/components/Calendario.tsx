@@ -37,7 +37,7 @@ const Calendario: React.FC = () => {
           (fecha: EVENTO_RESERVADO) => ({
             title: fecha.tienda,
             date: fecha.fecha,
-            backgroundColor: "red",
+            backgroundColor: "gray",
             extendedProps: {
               observacion: fecha.observacion || "Sin observación",
             },
@@ -101,6 +101,16 @@ const Calendario: React.FC = () => {
             left: "prev,next",
             center: "title",
             right: "",
+          }}
+          eventContent={(arg) => {
+            return (
+              <div className="flex items-center gap-1 h-10">
+                <span role="img" aria-label="feria">
+                  🎉
+                </span>
+                <span>{arg.event.title}</span>
+              </div>
+            );
           }}
         />
       )}
